@@ -19,8 +19,9 @@ joining = () => {
     joinBool = true;
 }
 enter = () => {
-    room_name = document.getElementById("rName").textContent;
-    user_name = document.getElementById("uName").innerHTML;
-    console.log(room_name);
-    console.log(user_name);
+    room_name = document.getElementById("rName").value;
+    user_name = document.getElementById("uName").value;
+
+    //the data is stored... send to server-side through socket or something...
+    // change page to either the newly created room or go to an existing room...
 }
