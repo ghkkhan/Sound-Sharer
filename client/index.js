@@ -29,3 +29,29 @@ enter = () => {
     //the data is stored... send to server-side through socket or something...
     // change page to either the newly created room or go to an existing room...
 }
+///////////////////////////////////////// SOCKET STUFF
+var socket = io.connect();
+
+test = document.getElementById('create_button');
+test.addEventListener('click', ()=>{
+    console.log('hi')
+    socket.emit('test')
+})
+
+// create room handler
+
+
+function create_room(rName, uName){
+    socket.emit('create_room', {
+        rName: rName,
+        uName: uName
+    });
+};
+
+// join room handler
+function join_room(rName, uName){
+    socket.emit('join_room', {
+        rName: rName,
+        uName: uName
+    });
+};
