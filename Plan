@@ -1,0 +1,14 @@
+Upload Music Central player Idea
+
+- one player creates a room...
+    This is the person who plays the audio...
+- the rest of the people may join the created room and upload files or something
+- These files are then added to a queue of files awaiting their turn
+- only the person incharge can delete a song from the queue...
+
+We can greatly expand the scope of this app later if we decide to support youtube
+    or something similar to that
+We can add a chat functionality, making it a discord clone. add the ability to kick someone.
+add a dice roll or something, I don't know. whatever.
+
+Something something AI prediction, by IAN.

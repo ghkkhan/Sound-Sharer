@@ -1,0 +1,63 @@
+body {
+    background-color: #444444;
+    font-size: 160%;
+    padding: 3%;
+    text-align: center;
+    color: rgb(2, 24, 12);
+}
+#holder {
+    font-size: 0;
+}
+.switch {
+    font-size: 200%;
+    background-color: #4CAF50; /* Green background */
+    border: 1px solid green; /* Green border */
+    height: 5%;
+    width: 9%;
+    font-size: x-large;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: white; /* White text */
+    padding: 10px 24px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+}
+.disabled{
+    background-color: #444444;
+    cursor: initial;
+}
+.switch :not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+/* Clear floats (clearfix hack) */
+.switch:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+/* Add a background color on hover */
+.switch:not(.disabled):hover {
+    background-color: #3e8e41;  
+}
+.form {
+    margin: auto;
+    width:33%;
+}
+#test {
+    text-align: left;
+}
+input {
+    font-size: 100%;
+    width: 100%;
+    margin: 10px;
+    border-radius: 10px;
+}
+#enter_room {
+    width: 70%;
+    font-size: 100%;
+    margin: 10px;
+    border-radius: 10px;
+    background: #393b38;
+    color: black;
+}
+#enter_room:hover{
+    background: #272927;
+}
