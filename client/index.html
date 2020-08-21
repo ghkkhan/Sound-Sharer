@@ -7,7 +7,7 @@
     <meta name="description" content="Website used to share audio files feeding into the same player.">
     <meta name="authors" content="Huzaifa Khan, Ian Hudson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css" type="text/css">
+    <link rel="stylesheet" href="./client/index.css" type="text/css">
 </head>
 
 <body>
@@ -20,22 +20,22 @@
 </div>
 <br />
 <br />
-<div class="form">
+<div class="container">
     <h2 id="mode">Create Room</h2>
 
-    <form id="main_form">
-        <label for="room_name">Room Name</label>
+    <form>
+        <label class="main_form" for="room_name">Room Name</label>
         <br />
-        <input type="text" id="rName" name="rName" placeholder="Room Name">
+        <input class="main_form" type="text" id="rName" name="rName" placeholder="Room Name">
         <br />
-        <label for="user_name">User ID</label>
+        <label class="main_form" for="user_name">User ID</label>
         <br />
-        <input type="text" id="uName" name="uName" placeholder="Smith">
+        <input class="main_form" type="text" id="uName" name="uName" placeholder="Smith">
         <br />
     </form>
     <button id="enter_room" name="enter_room" onclick="enter()">Enter</button>
 
 </div>
-<script src="index.js"></script>
+<script src="./client/index.js"></script>
 </body>
 </html>
