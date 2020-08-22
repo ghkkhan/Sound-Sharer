@@ -1,0 +1,77 @@
+body {
+    background-color: white;
+    font-size: 160%;
+    padding: 3%;
+    text-align: center;
+    color: #000000;
+}
+#holder {
+    font-size: 0;
+}
+.switch {
+    font-size: 200%;
+    background-color: #66f4ad; /* Green background */
+    border: 1px solid #44d869; /* Green border */
+    height: 5%;
+    width: 9%;
+    font-size: x-large;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: black; /* White text */
+    padding: 10px 24px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+}
+.disabled{
+    background-color: white;
+    cursor: initial;
+    color: black;
+}
+.switch :not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+/* Clear floats (clearfix hack) */
+.switch:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+/* Add a background color on hover */
+.switch:not(.disabled):hover {
+    background-color: #298640;  
+}
+.container {
+    margin: auto;
+    width:67%;
+    border: 4px solid black;
+    background-color: #f4f6ff;
+    padding-bottom: 100px;
+    -moz-transition: padding-bottom 1.5s;
+    -webkit-transition:padding-bottom 1.5s;
+    -o-transition: padding-bottom 1.5s;
+    transition: padding-bottom 1.5s;
+
+}
+body.magic .container {
+    padding-bottom:400px
+}
+.main_form {
+    margin: 32px;
+    width: 67%;
+    font-size: 100%;
+
+}
+input {
+    border:4px solid black;
+    border-radius: 4px;
+}
+#enter_room {
+    width: 27%;
+    font-size: 100%;
+    margin: 20px;
+    border-radius: 10px;
+    border:3px solid black;
+    background: #66f4ad;
+    color: black;
+}
+#enter_room:hover{
+    background: #298640;
+}

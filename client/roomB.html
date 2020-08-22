@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+``````````<!DOCTYPE html>
 
 <html>
 <head>
@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="./index.css" type="text/css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="./room.css" type="text/css">
+
 </head>
 
 <body>
@@ -24,8 +26,19 @@
     <br />
     <div class="container">
         <h2 id="mode">Create Room</h2>
-    
-        <form style="opacity: 0;">
+
+        <label class="main_form" for="room_name">Upload File</label>
+        <input type="file" id="song_byte">
+        <button id="enqueue_file" onclick="enqueue()">Send it</button>
+        <br />
+        
+
+        <audio controls>
+            <!-- <source src="horse.ogg" type="audio/ogg"> -->
+            <!-- <source src="horse.mp3" type="audio/mpeg"> -->
+            <!-- Your browser does not support the audio element. -->
+        </audio>
+        <form style="visibility: hidden;">
             <label class="main_form" for="room_name">Room Name</label>
             <br />
             <input class="main_form" type="text" id="rName" name="rName" placeholder="Room Name">
@@ -74,7 +87,8 @@
           </script>
         <!-- TESTING FILE UPLOAD -->
     
+        <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
     </div>
-    <script src=""></script>
+    <script src="./room.js"></script>
     </body>
     </html>
