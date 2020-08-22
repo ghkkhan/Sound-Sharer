@@ -38,13 +38,6 @@ enter = () => {
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();
 
-// testing code commented out 
-// test = document.getElementById('create_button');
-// test.addEventListener('click', ()=>{
-//     console.log('hi')
-//     socket.emit('test')
-// })
-
 // create room handler
 create_room = (room_name, user_name) => {
     let data = {
@@ -62,3 +55,8 @@ join_room =(room_name, user_name) => {
     }
     socket.emit('join_room', data);
 };
+
+// notification handler
+socket.on('notify', (data)=>{
+    alert(data.msg)
+})

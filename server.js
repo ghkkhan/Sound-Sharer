@@ -11,6 +11,51 @@ var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.ne
 var htmlPath = path.join(__dirname, 'client');
 app.use(express.static(htmlPath));
 
+////////////////////// ROOM INFO
+class Song{
+    constructor(dbID){
+        this._dbID = dbID;
+    }
+}
+
+class User{
+    constructor(name, socket){
+        this._name = name;
+        this._socket = socket;
+    }
+    get socket(){
+        return this._socket;
+    }
+}
+
+class Room{
+    constructor(room_name){
+        this._room_name = room_name;
+        this._users = [];
+        this._song_queue = [];
+        this._song_index = 0; // which songs to play from song_queue
+        this._song_time = 0; // in seconds
+    }
+    // get room_name(){ return this._room_name; }
+    // set room_name(x){ this._room_name = x; }
+    add_user(User){
+        this._users.push(User);
+    }
+    add_song(Song){
+        this._song_queue.push(Song);
+    }
+    notify_users(msg){
+        this._users.forEach((user)=>{
+            let socket = user.socket;
+            socket.emit('notify', {
+                msg: msg
+            });
+        });
+    }
+}
+
+rooms = []; // array of Room instances
+
 ////////////////////// SOCKET STUFF
 http.listen(port, function(){
     console.log('listening on *:' + port);
@@ -19,15 +64,19 @@ http.listen(port, function(){
 io.on('connection', function(socket){
     console.log('connected');
 
-    // socket.on('test', ()=>{
-    //     console.log('test')
-    // })
-
     socket.on("create_room", (data) => {
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+
+        room = new Room(data.rName);
+        user = new User(data.uName, socket);
+        room.add_user(user);
+        rooms.push(room);
+        console.log(rooms[0]._users);
+        room.notify_users('hi')
     });
+
     socket.on("join_room", (data) => {
         console.log("Joining Room");
         console.log("username: " + data.uName);
