@@ -37,7 +37,7 @@ class Room{
         this._song_index = 0; // which songs to play from song_queue
         this._song_time = 0; // in seconds
     }
-    // get room_name(){ return this._room_name; }
+    get room_name(){ return this._room_name; }
     // set room_name(x){ this._room_name = x; }
     add_user(User){
         this._users.push(User);
@@ -55,7 +55,18 @@ class Room{
     }
 }
 
-rooms = []; // array of Room instances
+var rooms = []; // array of Room instances
+
+function add_user_to_room(user, room_name){
+    // iterate through each room and find matching name
+    rooms.forEach((room)=>{
+        console.log(room.room_name)
+        console.log(room_name)
+        if(room.room_name == room_name){
+            room.add_user(user)
+        }
+    })
+}
 
 ////////////////////// SOCKET STUFF
 http.listen(port, function(){
@@ -66,6 +77,7 @@ io.on('connection', function(socket){
     console.log('connected');
 
     socket.on("create_room", (data) => {
+        // create server side room variable. tell client to set local variables
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
@@ -81,6 +93,7 @@ io.on('connection', function(socket){
     });
 
     socket.on("join_room", (data) => {
+        // check to see if room exists. tell client to set local variables
         console.log("Joining Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
@@ -89,8 +102,14 @@ io.on('connection', function(socket){
         socket.emit("set_local", {
             rName: data.rName,
             uName: data.uName
-        })
+        });
     });
+
+    socket.on('enter_room', (data)=>{
+        user = new User(data.uName, socket); // create instance of user
+        add_user_to_room(user, data.rName); // add user to room
+        console.log(rooms)
+    })
 
     socket.on("disconnect", ()=>{
         console.log('socket disconnected')
@@ -145,11 +164,12 @@ const storage = multer.diskStorage({
     }
 });
 
-var upload = multer({ storage : storage}).single('userPhoto');
+var upload = multer({ storage : storage}).single('song');
 
 app.post('/upload-song', (req, res)=>{
     upload(req,res,function(err) {
         if(err) {
+            console.log(err)
             return res.end("Error uploading file.");
         }
         res.end("File is uploaded");
