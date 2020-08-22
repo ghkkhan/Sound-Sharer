@@ -7,7 +7,7 @@
     <meta name="description" content="Website used to share audio files feeding into the same player.">
     <meta name="authors" content="Huzaifa Khan, Ian Hudson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./index.css" type="text/css">
+    <link rel="stylesheet" href="./room.css" type="text/css">
 </head>
 
 <body>
@@ -22,8 +22,19 @@
     <br />
     <div class="container">
         <h2 id="mode">Create Room</h2>
-    
-        <form style="opacity: 0;">
+
+        <label class="main_form" for="room_name">Upload File</label>
+        <input type="file" id="song_byte">
+        <button id="enqueue_file" onclick="enqueue()">Send it</button>
+        <br />
+        
+
+        <audio controls>
+            <!-- <source src="horse.ogg" type="audio/ogg"> -->
+            <!-- <source src="horse.mp3" type="audio/mpeg"> -->
+            <!-- Your browser does not support the audio element. -->
+        </audio>
+        <form style="visibility: hidden;">
             <label class="main_form" for="room_name">Room Name</label>
             <br />
             <input class="main_form" type="text" id="rName" name="rName" placeholder="Room Name">
@@ -33,9 +44,8 @@
             <input class="main_form" type="text" id="uName" name="uName" placeholder="Smith">
             <br />
         </form>
-        <button style="opacity: 0;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
-    
+        <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
     </div>
-    <script src=""></script>
+    <script src="./room.js"></script>
     </body>
     </html>

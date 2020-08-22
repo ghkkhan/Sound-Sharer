@@ -31,7 +31,7 @@ enter = () => {
     else join_room(room_name, user_name);
 
 
-    window.location.replace("./room.html");
+    window.location.replace("./roomB.html");
     //the data is stored... send to server-side through socket or something...
     // change page to either the newly created room or go to an existing room...
 }
