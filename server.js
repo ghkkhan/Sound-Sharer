@@ -11,6 +11,7 @@ var multer = require('multer');
 // serve up all client files
 var htmlPath = path.join(__dirname, 'client');
 app.use(express.static(htmlPath));
+app.use(express.json());
 
 ////////////////////// ROOM INFO
 class Song{
@@ -33,7 +34,7 @@ class Room{
     constructor(room_name){
         this._room_name = room_name;
         this._users = [];
-        this._song_queue = [];
+        this._song_queue = ['song-afejwfp8922390'];
         this._song_index = 0; // which songs to play from song_queue
         this._song_time = 0; // in seconds
     }
@@ -57,6 +58,26 @@ class Room{
 
 var rooms = []; // array of Room instances
 
+function add_song_to_room_queue(room_name, song_file){
+    rooms.forEach((fu) => {
+        console.log(fu.room_name)
+        console.log(room_name)
+        if(fu.room_name == room_name){
+            fu.add_song(song_file)
+        }
+    });
+}
+
+// iterate = (room_name) => {
+//     rooms.forEach((fu) => {
+//         console.log(fu.room_name)
+//         console.log(room_name)
+//         if(fu.room_name == room_name){
+//             console.log(fu)
+//             return fu
+//         }
+//     });
+// }
 function add_user_to_room(user, room_name){
     // iterate through each room and find matching name
     rooms.forEach((room)=>{
@@ -85,11 +106,6 @@ io.on('connection', function(socket){
         room = new Room(data.rName);
         rooms.push(room);
 
-        // tell client to set local storage variables. This way client's socket can change but name will still remain
-        socket.emit("set_local", {
-            rName: data.rName,
-            uName: data.uName
-        })
     });
 
     socket.on("join_room", (data) => {
@@ -98,11 +114,6 @@ io.on('connection', function(socket){
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
 
-        // tell client to set local storage
-        socket.emit("set_local", {
-            rName: data.rName,
-            uName: data.uName
-        });
     });
 
     socket.on('enter_room', (data)=>{
@@ -119,6 +130,7 @@ io.on('connection', function(socket){
         console.log(data.filename);
         console.log(data.username);
     });
+
 });
 
 ////////////////////// MONGO STUFF
@@ -157,6 +169,7 @@ function create_user(name){
     userInstance.save() // save to mongo server
 }
 
+var counter = 0;
 ////////////////////////////////////// MULTER STUFF (FILE STORAGE)
 // https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
 const storage = multer.diskStorage({
@@ -165,18 +178,29 @@ const storage = multer.diskStorage({
     },
     // By default, multer removes file extensions so let's add them back
     filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
+        cb(null, counter + path.extname(file.originalname));
+    },
 });
 
 var upload = multer({ storage : storage}).single('song');
 
-app.post('/upload-song', (req, res)=>{
+app.post('/upload-song/:uName/:rName', (req, res)=>{
+    console.log(req.params)
+    let room_name = req.params.rName;
+    let user_name = req.params.uName;
     upload(req,res,function(err) {
         if(err) {
             console.log(err)
             return res.end("Error uploading file.");
         }
         res.end("File is uploaded");
-    });
+    })
+
+    add_song_to_room_queue(room_name, counter+1 + ".mp3")
+    // iterate(room_name).add_song(counter + ".mp3")
+    // iterate(room_name).then(fu => {
+    //     fu.add_song(counter + ".mp3");
+    // });
+    counter++
+    console.log(rooms[0]._song_queue)
 })

@@ -55,9 +55,3 @@ join_room =(room_name, user_name) => {
     }
     socket.emit('join_room', data);
 };
-
-// local storage handler
-socket.on('set_local', (data)=>{
-    localStorage.rName = data.rName;
-    localStorage.uName = data.uName;
-})
