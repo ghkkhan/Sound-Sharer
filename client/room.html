@@ -8,6 +8,8 @@
     <meta name="authors" content="Huzaifa Khan, Ian Hudson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./index.css" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -34,6 +36,43 @@
             <br />
         </form>
         <button style="opacity: 0;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
+
+        <!-- TESTING FILE UPLOAD -->
+        <!-- https://codeforgeek.com/ajax-file-upload-node-js/ -->
+        <!-- Need to upload without refreshing page so socket doesn't get messed up. Use jquery-->
+        <form id="uploadForm" method="POST" action="/upload-song" enctype="multipart/form-data">
+            <div>
+                <label>Select song:</label>
+                <input type="file" name="song" />
+            </div>
+            <div>
+                <input type="submit" name="btn_upload_song" value="Upload" />
+            </div>
+        </form>
+
+        <div id="status">idunno</div>
+
+        <script>
+            $(document).ready(function() {
+                $('#uploadForm').submit(function() {
+                    $("#status").empty().text("File is uploading...");
+
+                    $(this).ajaxSubmit({
+                        error: function(xhr) {
+                            status('Error: ' + xhr.status);
+                        },
+                        success: function(response) {
+                            $("#status").empty().text(response);
+                            console.log(response);
+                        }
+                    });
+
+                    //Very important line, it disable the page refresh.
+                    return false;
+                });    
+            });
+          </script>
+        <!-- TESTING FILE UPLOAD -->
     
     </div>
     <script src=""></script>

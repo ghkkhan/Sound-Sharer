@@ -6,6 +6,7 @@ var path = require('path');
 var port = process.env.PORT || 3000;
 var mongoose = require('mongoose');
 var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
+var multer = require('multer');
 
 // serve up all client files
 var htmlPath = path.join(__dirname, 'client');
@@ -70,17 +71,29 @@ io.on('connection', function(socket){
         console.log("roomname: " + data.rName);
 
         room = new Room(data.rName);
-        user = new User(data.uName, socket);
-        room.add_user(user);
         rooms.push(room);
-        console.log(rooms[0]._users);
-        room.notify_users('hi')
+
+        // tell client to set local storage variables. This way client's socket can change but name will still remain
+        socket.emit("set_local", {
+            rName: data.rName,
+            uName: data.uName
+        })
     });
 
     socket.on("join_room", (data) => {
         console.log("Joining Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+
+        // tell client to set local storage
+        socket.emit("set_local", {
+            rName: data.rName,
+            uName: data.uName
+        })
+    });
+
+    socket.on("disconnect", ()=>{
+        console.log('socket disconnected')
     });
 });
 
@@ -120,5 +133,25 @@ function create_user(name){
     userInstance.save() // save to mongo server
 }
 
-create_song('test song title')
-create_user('ian')
+////////////////////////////////////// MULTER STUFF (FILE STORAGE)
+// https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'song_uploads/');
+    },
+    // By default, multer removes file extensions so let's add them back
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+var upload = multer({ storage : storage}).single('userPhoto');
+
+app.post('/upload-song', (req, res)=>{
+    upload(req,res,function(err) {
+        if(err) {
+            return res.end("Error uploading file.");
+        }
+        res.end("File is uploaded");
+    });
+})

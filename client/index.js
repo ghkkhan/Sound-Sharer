@@ -11,7 +11,7 @@ creating = () => { //just handling the switch... not actually creating a game
     joinBool = false;
 
 }
-joining = () => {//just handling the switch... not actually joining a game
+joining = () => { //just handling the switch... not actually joining a game
     document.getElementById("create_button").className = "switch enabled";
     document.getElementById("join_button").className = "switch disabled";
     document.getElementById("mode").innerHTML = "Join Room";
@@ -56,7 +56,8 @@ join_room =(room_name, user_name) => {
     socket.emit('join_room', data);
 };
 
-// notification handler
-socket.on('notify', (data)=>{
-    alert(data.msg)
+// local storage handler
+socket.on('set_local', (data)=>{
+    localStorage.rName = data.rName;
+    localStorage.uName = data.uName;
 })
