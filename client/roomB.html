@@ -55,8 +55,18 @@
         <form id="uploadForm" method="POST" action="/upload-song" enctype="multipart/form-data">
             <div>
                 <label>Select song:</label>
-                <input type="file" name="song" />
+                <input type="file" name="song" accept=".mp3" /> 
+                <input id="hidden_rName" name="rName"/>
+                <input id="hidden_uName" type="hidden" name="uName"/>
             </div>
+
+            <script>
+                // set hidden values
+                document.getElementById("uploadForm").action += "/" + localStorage.user_name + "/" + localStorage.room_name;
+                // document.getElementById("hidden_uName").value = localStorage.user_name;
+                // document.getElementById("hidden_rName").value = localStorage.room_name;
+            </script>
+
             <div>
                 <input type="submit" name="btn_upload_song" value="Upload" />
             </div>
@@ -88,6 +98,6 @@
     
         <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
     </div>
-    <script src="./roomB.js"></script>
+    <!--<script src="./roomB.js"></script> -->
     </body>
     </html>
