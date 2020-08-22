@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Room</title>
+    <meta name="description" content="Website used to share audio files feeding into the same player.">
+    <meta name="authors" content="Huzaifa Khan, Ian Hudson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="title">Shared Audio</h1>
+    
+    <!--Creating room part-->
+    <div id="holder">
+        <button type="button" id="create_button" class="switch disabled" onclick="creating()">Create</button>
+        <button type="button" id="join_button" class="switch enabled" onclick="joining()">Join</button>
+    </div>
+    <br />
+    <br />
+    <div class="container">
+        <h2 id="mode">Create Room</h2>
+    
+        <form style="opacity: 0;">
+            <label class="main_form" for="room_name">Room Name</label>
+            <br />
+            <input class="main_form" type="text" id="rName" name="rName" placeholder="Room Name">
+            <br />
+            <label class="main_form" for="user_name">User ID</label>
+            <br />
+            <input class="main_form" type="text" id="uName" name="uName" placeholder="Smith">
+            <br />
+        </form>
+        <button style="opacity: 0;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
+    
+    </div>
+    <script src=""></script>
+    </body>
+    </html>
