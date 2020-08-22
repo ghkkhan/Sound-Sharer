@@ -12,28 +12,26 @@
 
 <body>
     <h1 id="title">Shared Audio</h1>
-    
     <!--Creating room part-->
     <div id="holder">
-        <button type="button" id="create_button" class="switch disabled" onclick="creating()">Create</button>
-        <button type="button" id="join_button" class="switch enabled" onclick="joining()">Join</button>
+        <button type="button" id="create_button" class="switch enabled" onclick="creating()">Create</button>
+        <button type="button" id="join_button" class="switch disabled" onclick="joining()">Join</button>
     </div>
     <br />
     <br />
     <div class="container">
         <h2 id="mode">Create Room</h2>
-
         <label class="main_form" for="room_name">Upload File</label>
-        <input type="file" id="song_byte">
+        <input type="file" id="song_byte" accept=".mp3" onchange="fileUpdate()">
         <button id="enqueue_file" onclick="enqueue()">Send it</button>
         <br />
         
-
         <audio controls>
             <!-- <source src="horse.ogg" type="audio/ogg"> -->
             <!-- <source src="horse.mp3" type="audio/mpeg"> -->
             <!-- Your browser does not support the audio element. -->
         </audio>
+        <textarea>lol</textarea>
         <form style="visibility: hidden;">
             <label class="main_form" for="room_name">Room Name</label>
             <br />
@@ -46,6 +44,6 @@
         </form>
         <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
     </div>
-    <script src="./room.js"></script>
+    <script src="./roomB.js"></script>
     </body>
     </html>

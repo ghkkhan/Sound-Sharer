@@ -82,6 +82,11 @@ io.on('connection', function(socket){
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
     });
+
+    socket.on('addSong', (data) => {
+        console.log(data.filename);
+        console.log(data.username);
+    });
 });
 
 ////////////////////// MONGO STUFF
