@@ -6,6 +6,7 @@ var path = require('path');
 var port = process.env.PORT || 3000;
 var mongoose = require('mongoose');
 var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
+var multer = require('multer');
 
 // serve up all client files
 var htmlPath = path.join(__dirname, 'client');
@@ -36,7 +37,7 @@ class Room{
         this._song_index = 0; // which songs to play from song_queue
         this._song_time = 0; // in seconds
     }
-    // get room_name(){ return this._room_name; }
+    get room_name(){ return this._room_name; }
     // set room_name(x){ this._room_name = x; }
     add_user(User){
         this._users.push(User);
@@ -54,7 +55,18 @@ class Room{
     }
 }
 
-rooms = []; // array of Room instances
+var rooms = []; // array of Room instances
+
+function add_user_to_room(user, room_name){
+    // iterate through each room and find matching name
+    rooms.forEach((room)=>{
+        console.log(room.room_name)
+        console.log(room_name)
+        if(room.room_name == room_name){
+            room.add_user(user)
+        }
+    })
+}
 
 ////////////////////// SOCKET STUFF
 http.listen(port, function(){
@@ -65,22 +77,42 @@ io.on('connection', function(socket){
     console.log('connected');
 
     socket.on("create_room", (data) => {
+        // create server side room variable. tell client to set local variables
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
 
         room = new Room(data.rName);
-        user = new User(data.uName, socket);
-        room.add_user(user);
         rooms.push(room);
-        console.log(rooms[0]._users);
-        room.notify_users('hi')
+
+        // tell client to set local storage variables. This way client's socket can change but name will still remain
+        socket.emit("set_local", {
+            rName: data.rName,
+            uName: data.uName
+        })
     });
 
     socket.on("join_room", (data) => {
+        // check to see if room exists. tell client to set local variables
         console.log("Joining Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+
+        // tell client to set local storage
+        socket.emit("set_local", {
+            rName: data.rName,
+            uName: data.uName
+        });
+    });
+
+    socket.on('enter_room', (data)=>{
+        user = new User(data.uName, socket); // create instance of user
+        add_user_to_room(user, data.rName); // add user to room
+        console.log(rooms)
+    })
+
+    socket.on("disconnect", ()=>{
+        console.log('socket disconnected')
     });
 
     socket.on('addSong', (data) => {
@@ -125,5 +157,26 @@ function create_user(name){
     userInstance.save() // save to mongo server
 }
 
-create_song('test song title')
-create_user('ian')
+////////////////////////////////////// MULTER STUFF (FILE STORAGE)
+// https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'song_uploads/');
+    },
+    // By default, multer removes file extensions so let's add them back
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+var upload = multer({ storage : storage}).single('song');
+
+app.post('/upload-song', (req, res)=>{
+    upload(req,res,function(err) {
+        if(err) {
+            console.log(err)
+            return res.end("Error uploading file.");
+        }
+        res.end("File is uploaded");
+    });
+})
