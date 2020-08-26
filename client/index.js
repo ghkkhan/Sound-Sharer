@@ -29,7 +29,7 @@ enter = () => {
     if(joinBool == false) create_room(room_name, user_name);
     else join_room(room_name, user_name);
     
-    window.location.replace("./room.html");
+    window.location.replace("./roomB.html");
 }
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();
