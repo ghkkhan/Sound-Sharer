@@ -13,6 +13,12 @@ var htmlPath = path.join(__dirname, 'client');
 app.use(express.static(htmlPath));
 app.use(express.json());
 
+// global vars
+var counter = 0; // for naming files
+var rooms = []; // array of Room instances
+var refresh_delay = 1000; // time delay to send room info
+
+
 ////////////////////// ROOM INFO
 class Song{
     constructor(dbID){
@@ -34,9 +40,10 @@ class Room{
     constructor(room_name){
         this._room_name = room_name;
         this._users = [];
-        this._song_queue = ['song-afejwfp8922390'];
+        this._song_queue = [];
         this._song_index = 0; // which songs to play from song_queue
         this._song_time = 0; // in seconds
+        this._play_song = false;
     }
     get room_name(){ return this._room_name; }
     // set room_name(x){ this._room_name = x; }
@@ -54,9 +61,29 @@ class Room{
             });
         });
     }
+    send_info(){
+        this._users.forEach((user)=>{
+            let socket = user.socket;
+            socket.emit('room_info', {
+                song_queue: this._song_queue,
+                users: this._users,
+                room_name: this._room_name,
+                song_index: this._song_index,
+                song_time: this._song_time
+            })
+        })
+    }
 }
 
-var rooms = []; // array of Room instances
+function update_rooms(){
+    rooms.forEach((room)=>{
+        room.send_info()
+        if(room._play_song){
+            room._song_time += refresh_delay/1000
+        }
+    })
+}
+setInterval(update_rooms(), refresh_delay)
 
 function add_song_to_room_queue(room_name, song_file){
     rooms.forEach((fu) => {
@@ -169,7 +196,6 @@ function create_user(name){
     userInstance.save() // save to mongo server
 }
 
-var counter = 0;
 ////////////////////////////////////// MULTER STUFF (FILE STORAGE)
 // https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
 const storage = multer.diskStorage({
