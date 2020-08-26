@@ -26,14 +26,10 @@ enter = () => {
     localStorage.room_name = room_name;
     localStorage.user_name = user_name;
     
-    if(joinBool == false)//creating a room;
-        create_room(room_name, user_name);
+    if(joinBool == false) create_room(room_name, user_name);
     else join_room(room_name, user_name);
-
-
-    window.location.replace("./roomB.html");
-    //the data is stored... send to server-side through socket or something...
-    // change page to either the newly created room or go to an existing room...
+    
+    window.location.replace("./room.html");
 }
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();

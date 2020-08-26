@@ -14,7 +14,7 @@ app = express()
         .use(siofu.router)
         .use(express.static(htmlPath))
         .use(express.json())
-        .listen(port)
+        .listen(port);
 
 ////////////////////// ROOM INFO
 class Song{
