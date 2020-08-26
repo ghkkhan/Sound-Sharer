@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+``````````<!DOCTYPE html>
 
 <html>
 <head>
@@ -12,7 +12,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <link rel="stylesheet" href="./room.css" type="text/css">
-    <script src = "/siofu/client.js"></script>
+
 </head>
 
 <body>
@@ -27,11 +27,7 @@
     <div class="container">
         <h2 id="mode">Create Room</h2>
         <label class="main_form" for="room_name">Upload File</label>
-        <input type="file" id="mp3Upload"/>
-        <input type="text" id="song-name" placeholder="Enter the Song Name">
-
-
-        <!-- <input type="file" id="song_byte" accept=".mp3" onchange="fileUpdate()"> -->
+        <input type="file" id="song_byte" accept=".mp3" onchange="fileUpdate()">
         <button id="enqueue_file" onclick="enqueue()">Send it</button>
         <br />
         
@@ -40,10 +36,7 @@
             <!-- <source src="horse.mp3" type="audio/mpeg"> -->
             <!-- Your browser does not support the audio element. -->
         </audio>
-        <textarea id="queue">lol</textarea>
-        <label id="song_time">Song time goes in here</label>
-        
-        <!--Invisible stuff below-->
+        <textarea>lol</textarea>
         <form style="visibility: hidden;">
             <label class="main_form" for="room_name">Room Name</label>
             <br />
@@ -55,10 +48,56 @@
             <br />
         </form>
         <button style="opacity: 0;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
-        <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
-        <!--invisible stuff ends here-->
 
+        <!-- TESTING FILE UPLOAD -->
+        <!-- https://codeforgeek.com/ajax-file-upload-node-js/ -->
+        <!-- Need to upload without refreshing page so socket doesn't get messed up. Use jquery-->
+        <form id="uploadForm" method="POST" action="/upload-song" enctype="multipart/form-data">
+            <div>
+                <label>Select song:</label>
+                <input type="file" name="song" accept=".mp3" /> 
+                <input id="hidden_rName" name="rName"/>
+                <input id="hidden_uName" type="hidden" name="uName"/>
+            </div>
+
+            <script>
+                // set hidden values
+                document.getElementById("uploadForm").action += "/" + localStorage.user_name + "/" + localStorage.room_name;
+                // document.getElementById("hidden_uName").value = localStorage.user_name;
+                // document.getElementById("hidden_rName").value = localStorage.room_name;
+            </script>
+
+            <div>
+                <input type="submit" name="btn_upload_song" value="Upload" />
+            </div>
+        </form>
+
+        <div id="status">idunno</div>
+
+        <script>
+            $(document).ready(function() {
+                $('#uploadForm').submit(function() {
+                    $("#status").empty().text("File is uploading...");
+
+                    $(this).ajaxSubmit({
+                        error: function(xhr) {
+                            status('Error: ' + xhr.status);
+                        },
+                        success: function(response) {
+                            $("#status").empty().text(response);
+                            console.log(response);
+                        }
+                    });
+
+                    //Very important line, it disable the page refresh.
+                    return false;
+                });    
+            });
+          </script>
+        <!-- TESTING FILE UPLOAD -->
+    
+        <button style="visibility: hidden;" id="enter_room" name="enter_room" onclick="enter()">Enter</button>
     </div>
-    <script src="./room.js"></script>
+    <!--<script src="./roomB.js"></script> -->
     </body>
     </html>
