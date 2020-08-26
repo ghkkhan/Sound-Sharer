@@ -3,8 +3,10 @@ var app = express();
 var siofu = require("socketio-file-upload")
 var http = require('http').Server(app);
 var socketio = require('socket.io');
+var ss = require('socket.io-stream');
 var path = require('path');
 var port = process.env.PORT || 3000;
+var fs = require('fs');
 // var mongoose = require('mongoose');
 // var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
 
@@ -16,16 +18,19 @@ app = express()
         .use(express.json())
         .listen(port)
 
-// global vars
+// GLOBAL VARS
 var counter = 0; // for naming files
 var rooms = []; // array of Room instances
+var songs = [];
 var refresh_delay = 1000; // time delay to send room info
 
 
 ////////////////////// ROOM INFO
-class Song{
-    constructor(dbID){
-        this._dbID = dbID;
+class Song {
+    constructor(file_name, song_name, uploader){
+        this._file_name = file_name;
+        this._song_name = song_name;
+        this._uploader = uploader; // user name
     }
 }
 
@@ -33,6 +38,9 @@ class User{
     constructor(name, socket){
         this._name = name;
         this._socket = socket;
+    }
+    get name(){
+        return this._name;
     }
     get socket(){
         return this._socket;
@@ -54,6 +62,7 @@ class Room{
         this._users.push(User);
     }
     add_song(Song){
+        console.log(Song);
         this._song_queue.push(Song);
     }
     notify_users(msg){
@@ -65,11 +74,13 @@ class Room{
         });
     }
     send_info(){
+        // send info about room to all users
+        let user_list = this._users.map(()=>{user.name})
         this._users.forEach((user)=>{
             let socket = user.socket;
             socket.emit('room_info', {
                 song_queue: this._song_queue,
-                users: this._users,
+                users: user_list, // using this._users will cause recursive things for some reason???
                 room_name: this._room_name,
                 song_index: this._song_index,
                 song_time: this._song_time
@@ -78,7 +89,10 @@ class Room{
     }
 }
 
+// tell all rooms to update: timer
+// tell all users to update songqueue, user list, room name, song time, song index...
 function update_rooms(){
+    //console.log('update rooms')
     rooms.forEach((room)=>{
         room.send_info()
         if(room._play_song){
@@ -86,43 +100,31 @@ function update_rooms(){
         }
     })
 }
-setInterval(update_rooms(), refresh_delay)
 
-function add_song_to_room_queue(room_name, song_file){
-    rooms.forEach((fu) => {
-        console.log(fu.room_name)
-        console.log(room_name)
-        if(fu.room_name == room_name){
-            fu.add_song(song_file)
+setInterval(update_rooms, refresh_delay)
+
+function add_song_to_room_queue(room_name, Song){
+    // input: string, Song object
+    rooms.some((room) => {
+        if(room.room_name == room_name){
+            room.add_song(Song)
+            return true
         }
     });
 }
 
-// iterate = (room_name) => {
-//     rooms.forEach((fu) => {
-//         console.log(fu.room_name)
-//         console.log(room_name)
-//         if(fu.room_name == room_name){
-//             console.log(fu)
-//             return fu
-//         }
-//     });
-// }
 function add_user_to_room(user, room_name){
+    // input: User object, string
     // iterate through each room and find matching name
-    rooms.forEach((room)=>{
-        console.log(room.room_name)
-        console.log(room_name)
+    rooms.some((room)=>{
         if(room.room_name == room_name){
-            room.add_user(user)
+            room.add_user(user);
+            return true;
         }
     })
 }
 
 ////////////////////// SOCKET STUFF
-// http.listen(port, function(){
-//     console.log('listening on *:' + port);
-// });
 var io = socketio.listen(app);
 console.log("Listening on port 3000");
 
@@ -162,15 +164,18 @@ io.sockets.on('connection', function(socket){
         console.log(data.username);
     });
 
-    //CODE FOR FILE UPLOAD
+    /////////// CODE FOR FILE UPLOAD
     var uploader = new siofu();
     uploader.dir = "./song_uploads";
     uploader.listen(socket);
     
     //gets the data of the uploader....
     socket.on("queueing", data => {
+        console.log(data)
         console.log("Uploader: " + data.uploader);
         console.log("Song Name: " + data.song_name);
+        song = new Song(data.file_name, data.song_name, data.uploader);
+        add_song_to_room_queue(data.room_name, song);
     })
 
     uploader.on("start", function(event) {
@@ -178,9 +183,19 @@ io.sockets.on('connection', function(socket){
     })
     uploader.on("saved", function(event) {
         console.log("file saved");
+
     });
     uploader.on("error", function(event){
         console.log("error from the uploader");
+    });
+
+    ////////// FILE STREAM
+    // https://github.com/nkzawa/socket.io-stream/issues/73
+    socket.on('client-stream-request', function (data) {
+        var stream = ss.createStream();
+        var filename = "./song_uploads/" + data.file + ".mp3";
+        ss(socket).emit('audio-stream', stream, { name: filename });
+        fs.createReadStream(filename).pipe(stream);
     });
 });
 
@@ -201,22 +216,22 @@ io.sockets.on('connection', function(socket){
 // db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Import models from models folder
-var SongModel = require('./models/song');
-var UserModel = require('./models/user');
-const song = require('./models/song');
+// var SongModel = require('./models/song');
+// var UserModel = require('./models/user');
+// const song = require('./models/song');
 
-function create_song(title){
-    // create instance of song model
-    let songInstance = new SongModel({
-        title: title
-    })
-    songInstance.save() // save to mongo server
-}
+// function create_song(title){
+//     // create instance of song model
+//     let songInstance = new SongModel({
+//         title: title
+//     })
+//     songInstance.save() // save to mongo server
+// }
 
-function create_user(name){
-    // create instance of song model
-    let userInstance = new UserModel({
-        name: name
-    })
-    userInstance.save() // save to mongo server
-}
+// function create_user(name){
+//     // create instance of song model
+//     let userInstance = new UserModel({
+//         name: name
+//     })
+//     userInstance.save() // save to mongo server
+// }

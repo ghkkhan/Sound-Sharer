@@ -13,6 +13,7 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <link rel="stylesheet" href="./room.css" type="text/css">
     <script src = "/siofu/client.js"></script>
+    <script src = "/js/socket.io-stream/socket.io-stream.js"></script>
 </head>
 
 <body>
@@ -34,12 +35,13 @@
         <!-- <input type="file" id="song_byte" accept=".mp3" onchange="fileUpdate()"> -->
         <button id="enqueue_file" onclick="enqueue()">Send it</button>
         <br />
+
+        <!-- SONG QUEUE-->
+        <textarea>songs: </textarea>
         
-        <audio controls>
-            <!-- <source src="horse.ogg" type="audio/ogg"> -->
-            <!-- <source src="horse.mp3" type="audio/mpeg"> -->
-            <!-- Your browser does not support the audio element. -->
-        </audio>
+        <!-- AUDIO PLAYER -->
+        <audio id="audio_player" controls></audio>
+        <button id="play_button">play</button>
         <textarea id="queue">lol</textarea>
         <label id="song_time">Song time goes in here</label>
         
