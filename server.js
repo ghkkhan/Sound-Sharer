@@ -220,38 +220,3 @@ function create_user(name){
     })
     userInstance.save() // save to mongo server
 }
-
-////////////////////////////////////// MULTER STUFF (FILE STORAGE)
-// https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'song_uploads/');
-    },
-    // By default, multer removes file extensions so let's add them back
-    filename: function(req, file, cb) {
-        cb(null, counter + path.extname(file.originalname));
-    },
-});
-
-var upload = multer({ storage : storage}).single('song');
-
-app.post('/upload-song/:uName/:rName', (req, res)=>{
-    console.log(req.params)
-    let room_name = req.params.rName;
-    let user_name = req.params.uName;
-    upload(req,res,function(err) {
-        if(err) {
-            console.log(err)
-            return res.end("Error uploading file.");
-        }
-        res.end("File is uploaded");
-    })
-
-    add_song_to_room_queue(room_name, counter+1 + ".mp3")
-    // iterate(room_name).add_song(counter + ".mp3")
-    // iterate(room_name).then(fu => {
-    //     fu.add_song(counter + ".mp3");
-    // });
-    counter++
-    console.log(rooms[0]._song_queue)
-})
