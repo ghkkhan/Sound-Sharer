@@ -1,20 +1,17 @@
 var express = require('express');
 var app = express();
-var siofu = require("socketio-file-upload")
 var http = require('http').Server(app);
-var socketio = require('socket.io');
+var io = require('socket.io')(http);
 var path = require('path');
 var port = process.env.PORT || 3000;
-// var mongoose = require('mongoose');
-// var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
+var mongoose = require('mongoose');
+var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
+var multer = require('multer');
 
 // serve up all client files
 var htmlPath = path.join(__dirname, 'client');
-app = express()
-        .use(siofu.router)
-        .use(express.static(htmlPath))
-        .use(express.json())
-        .listen(port)
+app.use(express.static(htmlPath));
+app.use(express.json());
 
 // global vars
 var counter = 0; // for naming files
@@ -120,13 +117,11 @@ function add_user_to_room(user, room_name){
 }
 
 ////////////////////// SOCKET STUFF
-// http.listen(port, function(){
-//     console.log('listening on *:' + port);
-// });
-var io = socketio.listen(app);
-console.log("Listening on port 3000");
+http.listen(port, function(){
+    console.log('listening on *:' + port);
+});
 
-io.sockets.on('connection', function(socket){
+io.on('connection', function(socket){
     console.log('connected');
 
     socket.on("create_room", (data) => {
@@ -134,6 +129,7 @@ io.sockets.on('connection', function(socket){
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+
         room = new Room(data.rName);
         rooms.push(room);
 
@@ -151,7 +147,7 @@ io.sockets.on('connection', function(socket){
         user = new User(data.uName, socket); // create instance of user
         add_user_to_room(user, data.rName); // add user to room
         console.log(rooms)
-    });
+    })
 
     socket.on("disconnect", ()=>{
         console.log('socket disconnected')
@@ -162,48 +158,27 @@ io.sockets.on('connection', function(socket){
         console.log(data.username);
     });
 
-    //CODE FOR FILE UPLOAD
-    var uploader = new siofu();
-    uploader.dir = "./song_uploads";
-    uploader.listen(socket);
-    
-    //gets the data of the uploader....
-    socket.on("queueing", data => {
-        console.log("Uploader: " + data.uploader);
-        console.log("Song Name: " + data.song_name);
-    })
-
-    uploader.on("start", function(event) {
-        console.log("I'ts coming");
-    })
-    uploader.on("saved", function(event) {
-        console.log("file saved");
-    });
-    uploader.on("error", function(event){
-        console.log("error from the uploader");
-    });
 });
 
-// ////////////////////// MONGO STUFF
-// mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-//        .then(() => {
-//          console.log('Database connection successful')
-//        })
-//        .catch(err => {
-//          console.error('Database connection error')
-//        });
+////////////////////// MONGO STUFF
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+       .then(() => {
+         console.log('Database connection successful')
+       })
+       .catch(err => {
+         console.error('Database connection error')
+       });
 
-// // https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
-// // Get the default connection
-// var db = mongoose.connection;
+// https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
+// Get the default connection
+var db = mongoose.connection;
 
-// // Bind connection to error event (to get notification of connection errors)
-// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Import models from models folder
 var SongModel = require('./models/song');
-var UserModel = require('./models/user');
-const song = require('./models/song');
+var UserModel = require('./models/user')
 
 function create_song(title){
     // create instance of song model
