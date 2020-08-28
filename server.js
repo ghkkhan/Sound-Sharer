@@ -246,19 +246,22 @@ io.sockets.on('connection', function(socket){
         // client requesting to stream current song
 
         // get file name of current song.
-        let file;
         rooms.some((room)=>{
             // get to current room
             if(room.room_name == data.room_name){
-                file = room.current_song.file_name;
+                let current_song = room.current_song; // will be undefined if song queue is empty
+                if(current_song){
+                    let file = current_song.file_name;
+
+                    // create stream to client
+                    var stream = ss.createStream();
+                    var filename = path.join(uploads_dir, file);
+                    ss(socket).emit('audio-stream', stream, { name: filename });
+                    fs.createReadStream(filename).pipe(stream);
+                }
                 return true;
             }
         })
-
-        var stream = ss.createStream();
-        var filename = path.join(uploads_dir, file + ".mp3");
-        ss(socket).emit('audio-stream', stream, { name: filename });
-        fs.createReadStream(filename).pipe(stream);
     });
 });
 

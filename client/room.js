@@ -1,16 +1,5 @@
 document.getElementById("mode").innerHTML += localStorage.room_name;
 
-// GLOBAL VARS
-var client = {
-    song_queue: -1,
-    song_index: -1,
-    song_time: -1,
-    song_play: -1,
-}
-var audio = document.getElementById('audio_player');
-
-
-
 var fileName = "placeholder";
 var fire;
 window.onload = function() {
@@ -23,6 +12,18 @@ pageContent = '<label class="main_form" for="room_name">Upload File</label><inpu
 addContent = () => {
     document.getElementById("Con").innerHTML += pageContent;
 }
+
+
+///////// GLOBAL VARS
+var client = {
+    song_queue: -1,
+    song_index: -1,
+    song_time: -1,
+    song_play: false,
+}
+var audio = document.getElementById('audio_player');
+
+
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();
 var uploader = new SocketIOFileUpload(socket);
@@ -101,5 +102,6 @@ ss(socket).on('audio-stream', function(stream, data) {
     stream.on('end', function () {
         console.log("playing song!");
         audio.src = (window.URL || window.webkitURL).createObjectURL(new Blob(parts));
+        audio.play();
     });
 });
