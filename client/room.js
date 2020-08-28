@@ -20,6 +20,7 @@ var client = {
     song_index: -1,
     song_time: -1,
     song_play: false,
+    desync_allowed: -1
 }
 var audio = document.getElementById('audio_player');
 
@@ -35,7 +36,12 @@ socket.emit('enter_room', {
     uName: localStorage.user_name
 })
 
-socket.on("room_info", data => {
+socket.on("room_info", (data)=>{
+    // get initial room info
+    client.desync_allowed = data.desync_allowed;
+})
+
+socket.on("room_update", data => {
     // get info from server. sync client info with server info
     // sync queue
     client.song_queue = data.song_queue.map((song)=>{
@@ -56,9 +62,11 @@ socket.on("room_info", data => {
         client.song_play = data.song_play
     }
 
-    // sync song_time
-    client.song_time = data.song_time;
-    audio.currentTime = client.song_time; // set time on audio player
+    // sync song_time if too far off
+    client.song_time = data.song_time; // client.song_time is pretty useless b/c of audio.currentTime
+    if(Math.abs(client.song_time - audio.currentTime) > client.desync_allowed){
+        audio.currentTime = client.song_time; // set time on audio player
+    }
 
     console.log(client)
 });

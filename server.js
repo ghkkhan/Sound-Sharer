@@ -21,8 +21,9 @@ app = express()
 
 // GLOBAL VARS
 var rooms = []; // array of Room instances
-var refresh_delay = 3000; // time delay to send room info
+var refresh_delay = 3000; // time delay to send room info in millis
 var uploads_dir = "./song_uploads"
+var desync_allowed = 3; // time desync allowed between server and client audio in seconds
 
 
 ////////////////////// ROOM INFO
@@ -89,7 +90,7 @@ class Room{
         let user_list = this._users.map(()=>{user.name})
         this._users.forEach((user)=>{
             let socket = user.socket;
-            socket.emit('room_info', {
+            socket.emit('room_update', {
                 song_queue: this._song_queue,
                 users: user_list, // using this._users will cause recursive things for some reason???
                 room_name: this._room_name,
@@ -119,6 +120,8 @@ function update_rooms(){
             let current_song = room.current_song;
             let current_song_duration = current_song.duration;
             if(room._song_time > current_song_duration){
+                room._song_time = 0;
+
                 room._song_index += 1;
                 if(room._song_index >= room._song_queue.length){
                     // if at end of queue, go to beginning
@@ -188,6 +191,11 @@ io.sockets.on('connection', function(socket){
         console.log(data.rName)
         add_user_to_room(user, data.rName); // add user to room
         console.log(rooms)
+
+        socket.emit('room_info', {
+            // initial info when user joins room
+            desync_allowed: desync_allowed
+        })
     });
 
     socket.on("disconnect", ()=>{
