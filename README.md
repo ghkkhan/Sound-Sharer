@@ -7,7 +7,7 @@ feed audio files down a sink
 - [ ] Room creation
 - [ ] Joining Room
 - [ ] receiving and saving songs on the server
-- [ ] queueing songs
+- [x] queueing songs
 - [x] keeping song and queue in sync for everyone, and newcomers
 - [ ] deleting songs from the queue
 
