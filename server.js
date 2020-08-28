@@ -17,7 +17,7 @@ app = express()
         .use(siofu.router)
         .use(express.static(htmlPath))
         .use(express.json())
-        .listen(port)
+        .listen(port);
 
 // GLOBAL VARS
 var rooms = []; // array of Room instances

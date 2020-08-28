@@ -40,10 +40,19 @@ body {
 }
 .container {
     margin: auto;
+    height:500px;
     width:67%;
     border: 4px solid black;
     background-color: #f4f6ff;
     padding-bottom: 100px;
+    -moz-transition: height 1.5s;
+    -webkit-transition:height 1.5s;
+    -o-transition: height 1.5s;
+    transition: height 1.5s;
+}
+
+body.magic .container {
+    height:750px;
 }
 .main_form {
     margin: 32px;

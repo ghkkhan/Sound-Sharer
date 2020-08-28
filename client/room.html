@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Room</title>
+    <meta name="description" content="Website used to share audio files feeding into the same player.">
+    <meta name="authors" content="Huzaifa Khan, Ian Hudson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css" type="text/css">
+    <link rel="stylesheet" href="./room.css" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src = "/siofu/client.js"></script>
+</head>
+
+<body>
+    <h1 id="title" style="font-size:72px">Shared Audio</h1>
+    <br />
+    <br />
+    <div class="container" id="Con">
+        <h2 id="mode">Currently in Room: </h2>
+
+        <!--THE CODE BELOW WILL BE ADDED IN BY JAVASCRIPT. It is just here for convenience.-->
+        <!-- <label class="main_form" for="room_name">Upload File</label>
+        <input type="file" id="mp3Upload"/>
+        <br />
+        <br />
+        <input type="text" id="song-name" placeholder="Enter the Song Name">
+        <br />
+        <input type="file" id="song_byte" accept=".mp3" onchange="fileUpdate()">
+        <button id="enqueue_file" onclick="enqueue()">Send it</button>
+        <br />
+        <audio controls>
+            <source src="horse.ogg" type="audio/ogg"> 
+             <source src="horse.mp3" type="audio/mpeg"> 
+             Your browser does not support the audio element. 
+        </audio>
+        <br />
+        <textarea id="queue">lol</textarea>
+        <br />
+        <label id="song_time">Song time goes in here</label> -->
+    </div>
+    <script src="./room.js"></script>
+    </body>
+    </html>
