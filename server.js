@@ -7,6 +7,7 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var port = process.env.PORT || 3000;
 var fs = require('fs');
+const { getAudioDurationInSeconds } = require('get-audio-duration');
 // var mongoose = require('mongoose');
 // var mongoUrl = "mongodb+srv://node-user:xTOdShw2dWdKVOFz@songdb.r4pht.mongodb.net/songSink?retryWrites=true&w=majority";
 
@@ -19,18 +20,27 @@ app = express()
         .listen(port)
 
 // GLOBAL VARS
-var counter = 0; // for naming files
 var rooms = []; // array of Room instances
-var songs = [];
-var refresh_delay = 1000; // time delay to send room info
+var refresh_delay = 3000; // time delay to send room info
+var uploads_dir = "./song_uploads"
 
 
 ////////////////////// ROOM INFO
 class Song {
-    constructor(file_name, song_name, uploader){
+    constructor(file_name, song_name, uploader, duration){
         this._file_name = file_name;
         this._song_name = song_name;
         this._uploader = uploader; // user name
+        this._duration = duration; // in seconds
+    }
+    get file_name(){
+        return this._file_name;
+    }
+    get song_name(){
+        return this._song_name;
+    }
+    get duration(){
+        return this._duration;
     }
 }
 
@@ -57,7 +67,8 @@ class Room{
         this._play_song = false;
     }
     get room_name(){ return this._room_name; }
-    // set room_name(x){ this._room_name = x; }
+    get song_queue() { return this._song_queue; }
+    set play_song(b){ this._play_song = b; }
     add_user(User){
         this._users.push(User);
     }
@@ -83,19 +94,39 @@ class Room{
                 users: user_list, // using this._users will cause recursive things for some reason???
                 room_name: this._room_name,
                 song_index: this._song_index,
-                song_time: this._song_time
+                song_time: this._song_time,
+                song_play: this._play_song
             })
         })
+    }
+    get current_song(){
+        // returns song object
+        return this._song_queue[this._song_index];
     }
 }
 
 // tell all rooms to update: timer
 // tell all users to update songqueue, user list, room name, song time, song index...
 function update_rooms(){
-    //console.log('update rooms')
+    console.log(rooms[0])
     rooms.forEach((room)=>{
-        room.send_info()
+        room.send_info() // send info to clients
+
         if(room._play_song){
+            // if song is playing:
+
+            // if song is over, roll over to next song in queue
+            let current_song = room.current_song;
+            let current_song_duration = current_song.duration;
+            if(room._song_time > current_song_duration){
+                room._song_index += 1;
+                if(room._song_index >= room._song_queue.length){
+                    // if at end of queue, go to beginning
+                    room._song_index = 0;
+                }
+            }
+
+            // update song time
             room._song_time += refresh_delay/1000
         }
     })
@@ -150,7 +181,11 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('enter_room', (data)=>{
+        // when user is on room.html, use local variables to add them into room
+        // deals with fact that sockets are renewed on refresh
         user = new User(data.uName, socket); // create instance of user
+        console.log(data.uName)
+        console.log(data.rName)
         add_user_to_room(user, data.rName); // add user to room
         console.log(rooms)
     });
@@ -164,9 +199,21 @@ io.sockets.on('connection', function(socket){
         console.log(data.username);
     });
 
+    socket.on('play_queue', (data)=>{
+        // client requested to start playing songs
+        rooms.some((room)=>{
+            if(room.room_name == data.room_name){
+                if(room.song_queue.length>0){
+                    room.play_song = true;
+                }
+                return true;
+            }
+        })
+    })
+
     /////////// CODE FOR FILE UPLOAD
     var uploader = new siofu();
-    uploader.dir = "./song_uploads";
+    uploader.dir = uploads_dir;
     uploader.listen(socket);
     
     //gets the data of the uploader....
@@ -174,8 +221,12 @@ io.sockets.on('connection', function(socket){
         console.log(data)
         console.log("Uploader: " + data.uploader);
         console.log("Song Name: " + data.song_name);
-        song = new Song(data.file_name, data.song_name, data.uploader);
-        add_song_to_room_queue(data.room_name, song);
+        // get duration of song idk how to do this better
+        getAudioDurationInSeconds(path.join(uploads_dir, data.file_name)).then((duration) => {
+            console.log("Duration:" + duration);
+            let song = new Song(data.file_name, data.song_name, data.uploader, duration);
+            add_song_to_room_queue(data.room_name, song);
+        });
     })
 
     uploader.on("start", function(event) {
@@ -191,9 +242,21 @@ io.sockets.on('connection', function(socket){
 
     ////////// FILE STREAM
     // https://github.com/nkzawa/socket.io-stream/issues/73
-    socket.on('client-stream-request', function (data) {
+    socket.on('client_stream_request', function (data) {
+        // client requesting to stream current song
+
+        // get file name of current song.
+        let file;
+        rooms.some((room)=>{
+            // get to current room
+            if(room.room_name == data.room_name){
+                file = room.current_song.file_name;
+                return true;
+            }
+        })
+
         var stream = ss.createStream();
-        var filename = "./song_uploads/" + data.file + ".mp3";
+        var filename = path.join(uploads_dir, file + ".mp3");
         ss(socket).emit('audio-stream', stream, { name: filename });
         fs.createReadStream(filename).pipe(stream);
     });

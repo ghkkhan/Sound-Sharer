@@ -1,4 +1,11 @@
-// const SocketIOFileUploadServer = import("socketio-file-upload");
+// GLOBAL VARS
+var client = {
+    song_queue: -1,
+    song_index: -1,
+    song_time: -1,
+    song_play: -1,
+}
+var audio = document.getElementById('audio_player');
 
 var fileName = "placeholder";
 var fire;
@@ -13,13 +20,36 @@ var uploader = new SocketIOFileUpload(socket);
 uploader.listenOnSubmit(document.getElementById("enqueue_file"),document.getElementById("mp3Upload"));
 
 socket.emit('enter_room', {
-    rName: localStorage.rName,
-    uName: localStorage.uName
+    rName: localStorage.room_name,
+    uName: localStorage.user_name
 })
 
 socket.on("room_info", data => {
-    //user info and stuff...
-    document.getElementById("queue").innerText = data.song_queue;
+    // get info from server. sync client info with server info
+    // sync queue
+    client.song_queue = data.song_queue.map((song)=>{
+        return song._song_name
+    })
+    document.getElementById("queue").innerText = client.song_queue;
+
+    // sync song_index and whether song is playing
+    if(client.song_index != data.song_index || client.song_play != data.song_play){
+        console.log('REQUEST STREAM');
+        socket.emit('client_stream_request', {
+            room_name: localStorage.room_name,
+            user_name: localStorage.user_name
+        });
+        client.song_index = data.song_index;
+
+        // sync whether song is playing
+        client.song_play = data.song_play
+    }
+
+    // sync song_time
+    client.song_time = data.song_time;
+    audio.currentTime = client.song_time; // set time on audio player
+
+    console.log(client)
 });
 
 /////////////// FILE UPLOAD
@@ -27,6 +57,7 @@ var filename = ""; // keep track of name of file being uploaded
 var input = document.getElementById('mp3Upload');
 input.onchange = ()=>{
     console.log("prepared:", input.files.item(0).name);
+    console.log(input.duration);
 };
 enqueue = () => {
     let data = {
@@ -43,14 +74,14 @@ enqueue = () => {
 
 /////////////// AUDIO PLAYER STREAMING
 document.getElementById("play_button").addEventListener("click", (event)=>{ 
-    console.log('play button')
-    socket.emit('client-stream-request', {
-        file: 'redbone'
+    // start playing songs
+    socket.emit('play_queue', {
+        room_name: localStorage.room_name
     })
-  });
+});
 
 
-var audio = document.getElementById('audio_player');
+// get audio information on load into audio player
 ss(socket).on('audio-stream', function(stream, data) {
     parts = [];
     stream.on('data', function(chunk){
@@ -60,6 +91,5 @@ ss(socket).on('audio-stream', function(stream, data) {
     stream.on('end', function () {
         console.log("playing song!");
         audio.src = (window.URL || window.webkitURL).createObjectURL(new Blob(parts));
-        audio.play();
     });
 });
