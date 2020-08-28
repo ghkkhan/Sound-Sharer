@@ -1,5 +1,5 @@
-./song_uploads/*
-!somefolder/.gitkeep 
+song_uploads/*
+!song_uploads/.gitkeep 
 
 # Logs
 logs
