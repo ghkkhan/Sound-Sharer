@@ -18,18 +18,19 @@ joining = () => { //just handling the switch... not actually joining a game
     joinBool = true;
 }
 
-//actually enter/joining a game...
+//actually  /joining a game...
 enter = () => {
     room_name = document.getElementById("rName").value;
     user_name = document.getElementById("uName").value;
 
     localStorage.room_name = room_name;
     localStorage.user_name = user_name;
+    localStorage.joinBool = joinBool;
     
     if(joinBool == false) create_room(room_name, user_name);
     else join_room(room_name, user_name);
     
-    window.location.replace("./roomB.html");
+    window.location.replace("./room.html");
 }
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();
