@@ -16,11 +16,13 @@ io.sockets.on('connection', function (socket) {
 
         saferoom = true;
 
-        rooms.forEach(elem => { if(elem == data.rName) saferoom=false;});
+        rooms.forEach(elem => { 
+            if(elem.room_name == data.rName){ saferoom=false;}
+        });    
         if(saferoom) {
             room = new Room(data.rName);
             rooms.push(room);
-            socket.emit("room-name-success", data = {
+            socket.emit("room-success", data = {
                 status:"SUCCESS"
             });
         }
@@ -38,12 +40,12 @@ io.sockets.on('connection', function (socket) {
         console.log("roomname: " + data.rName);
         saferoom = false;
         rooms.forEach(elem => {
-            if(elem == data.rName) saferoom = true; 
+            if(elem.room_name == data.rName) saferoom = true;
         });
 
         if(saferoom) {
             // room exists and user may join it...
-            socket.emit("room-name-success", data = {
+            socket.emit("room-success", data = {
                 status:"SUCCESS"
             });
         }

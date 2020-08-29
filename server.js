@@ -57,7 +57,7 @@ function update_rooms(){
     })
 }
 
-setInterval(update_rooms, refresh_delay)
+// setInterval(update_rooms, refresh_delay)
 
 function add_song_to_room_queue(room_name, Song){
     // input: string, Song object

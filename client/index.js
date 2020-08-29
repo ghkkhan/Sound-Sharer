@@ -26,7 +26,7 @@ enter = () => {
     localStorage.room_name = room_name;
     localStorage.user_name = user_name;
     localStorage.joinBool = joinBool;
-    
+        
     if(joinBool == false) create_room(room_name, user_name);
     else join_room(room_name, user_name);
     
@@ -63,7 +63,7 @@ socket.on("room-success", data => {
 socket.on("room-error", data => {
     console.log("eror occured. Please try again");
     if(data.status == "RAE"){
-        console.log("Room already exists. pick another room");
+        console.log("Room Already Exists. pick another room");
         
         alert("There is already a room with the same name that you've picked... Please pick another name.");
     }
