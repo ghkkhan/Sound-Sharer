@@ -3,6 +3,8 @@
 
 exports = module.exports = function(io, Room, Song, User, siofu, ss, path, fs, getAudioDurationInSeconds, rooms, uploads_dir, desync_allowed, update_rooms, add_song_to_room_queue, add_user_to_room){
 
+var saferoom;
+
 io.sockets.on('connection', function (socket) {
     console.log('connected');
 
@@ -11,9 +13,22 @@ io.sockets.on('connection', function (socket) {
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
-        room = new Room(data.rName);
-        rooms.push(room);
 
+        saferoom = true;
+
+        rooms.forEach(elem => { if(elem == data.rName) saferoom=false;});
+        if(saferoom) {
+            room = new Room(data.rName);
+            rooms.push(room);
+            socket.emit("room-name-success", data = {
+                status:"SUCCESS"
+            });
+        }
+        else {
+            socket.emit("room-error", data = {
+                status: "RAE",
+            });
+        }
     });
 
     socket.on("join_room", (data) => {
@@ -21,6 +36,23 @@ io.sockets.on('connection', function (socket) {
         console.log("Joining Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+        saferoom = false;
+        rooms.forEach(elem => {
+            if(elem == data.rName) saferoom = true; 
+        });
+
+        if(saferoom) {
+            // room exists and user may join it...
+            socket.emit("room-name-success", data = {
+                status:"SUCCESS"
+            });
+        }
+        else {
+            // room does not exist... warn user to enter a new name
+            socket.emit("room-error", data = {
+                status: "ROOM-DNE"
+            });
+        }
 
     });
 
