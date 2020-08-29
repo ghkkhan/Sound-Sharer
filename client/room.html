@@ -19,7 +19,6 @@
     <div class="container" id="Con">
         <h2 id="mode">Currently in Room: </h2>
 
-        <!--THE CODE BELOW WILL BE ADDED IN BY JAVASCRIPT. It is just here for convenience.-->
         <label class="main_form" for="room_name">Upload File</label>
         <input type="file" id="mp3Upload"/>
         <br />
@@ -31,10 +30,13 @@
 
         <!-- SONG QUEUE-->
         <textarea>songs: </textarea>
-        
+    
+
         <!-- AUDIO PLAYER -->
-        <audio id="audio_player" controls></audio>
+        <audio id="audio_player" controls autoplay muted></audio>
         <button id="play_button">play</button>
+
+        <!-- SONG QUEUE-->
         <textarea id="queue">lol</textarea>
         <label id="song_time">Song time goes in here</label>
 

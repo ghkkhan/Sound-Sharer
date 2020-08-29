@@ -6,12 +6,6 @@ window.onload = function() {
     document.body.className += " magic";
 }
 
-
-addContent = () => {
-    document.getElementById("Con").innerHTML += pageContent;
-}
-
-
 ///////// GLOBAL VARS
 var client = {
     song_queue: -1,
