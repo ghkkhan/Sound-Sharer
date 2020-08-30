@@ -3,8 +3,6 @@
 
 exports = module.exports = function(io, Room, Song, User, siofu, ss, path, fs, getAudioDurationInSeconds, rooms, uploads_dir, desync_allowed, update_rooms, add_song_to_room_queue, add_user_to_room){
 
-var saferoom;
-
 io.sockets.on('connection', function (socket) {
     console.log('connected');
 
@@ -13,24 +11,9 @@ io.sockets.on('connection', function (socket) {
         console.log("Creating Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
+        room = new Room(data.rName);
+        rooms.push(room);
 
-        saferoom = true;
-
-        rooms.forEach(elem => { 
-            if(elem.room_name == data.rName){ saferoom=false;}
-        });    
-        if(saferoom) {
-            room = new Room(data.rName);
-            rooms.push(room);
-            socket.emit("room-success", data = {
-                status:"SUCCESS"
-            });
-        }
-        else {
-            socket.emit("room-error", data = {
-                status: "RAE",
-            });
-        }
     });
 
     socket.on("join_room", (data) => {
@@ -38,23 +21,6 @@ io.sockets.on('connection', function (socket) {
         console.log("Joining Room");
         console.log("username: " + data.uName);
         console.log("roomname: " + data.rName);
-        saferoom = false;
-        rooms.forEach(elem => {
-            if(elem.room_name == data.rName) saferoom = true;
-        });
-
-        if(saferoom) {
-            // room exists and user may join it...
-            socket.emit("room-success", data = {
-                status:"SUCCESS"
-            });
-        }
-        else {
-            // room does not exist... warn user to enter a new name
-            socket.emit("room-error", data = {
-                status: "ROOM-DNE"
-            });
-        }
 
     });
 
@@ -62,22 +28,19 @@ io.sockets.on('connection', function (socket) {
         // when user is on room.html, use local variables to add them into room
         // deals with fact that sockets are renewed on refresh
         user = new User(data.uName, socket); // create instance of user
-        console.log(data.uName);
-        console.log(data.rName);
+        console.log(data.uName)
+        console.log(data.rName)
         add_user_to_room(user, data.rName); // add user to room
         console.log(rooms)
 
         socket.emit('room_info', {
             // initial info when user joins room
             desync_allowed: desync_allowed
-        });
+        })
     });
 
-    socket.on("disconnect", () => {
-        console.log('socket disconnected');
-        //remove user from room.
-        remove_user_from_room(socket);
-
+    socket.on("disconnect", ()=>{
+        console.log('socket disconnected')
     });
 
     socket.on('addSong', (data) => {

@@ -14,11 +14,6 @@ module.exports = class Room{
     set play_song(b){ this._play_song = b; }
     add_user(User){
         this._users.push(User);
-        this.to_string();
-    }
-    rem_user(User) {
-        this._users = this.users.fizlter(e => e != User);
-        this.to_string();
     }
     add_song(Song){
         console.log(Song);
@@ -31,11 +26,6 @@ module.exports = class Room{
                 msg: msg
             });
         });
-    }
-    to_string() {
-        console.log(`Roomname: ${this._room_name}`);
-        console.log(`Users: ${this._users.toString()}`);
-        console.log(`songs: ${this._song_queue}`);
     }
     send_info(){
         // send info about room to all users
