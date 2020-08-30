@@ -79,9 +79,15 @@ function add_user_to_room(user, room_name){
         }
     })
 }
-
+remove_user_from_room = (socket) => {
+    rooms.forEach((room) => {
+        room._users.forEach(user => {
+            if(user.socket() === socket) { room.rem_user(user); return; };
+        });
+    });
+}
 ////////// SOCKET STUFF
 var io = socketio.listen(app);
 
 // idk if there is better way to do this other than pass everything in this file to the socket file and I'm too lazy to find out
-var file = require('./sockets.js')(io, Room, Song, User, siofu, ss, path, fs, getAudioDurationInSeconds, rooms, uploads_dir, desync_allowed, update_rooms, add_song_to_room_queue, add_user_to_room)
+var file = require('./sockets.js')(io, Room, Song, User, siofu, ss, path, fs, getAudioDurationInSeconds, rooms, uploads_dir, desync_allowed, update_rooms, add_song_to_room_queue, add_user_to_room, remove_user_from_room)

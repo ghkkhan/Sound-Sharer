@@ -62,19 +62,22 @@ io.sockets.on('connection', function (socket) {
         // when user is on room.html, use local variables to add them into room
         // deals with fact that sockets are renewed on refresh
         user = new User(data.uName, socket); // create instance of user
-        console.log(data.uName)
-        console.log(data.rName)
+        console.log(data.uName);
+        console.log(data.rName);
         add_user_to_room(user, data.rName); // add user to room
         console.log(rooms)
 
         socket.emit('room_info', {
             // initial info when user joins room
             desync_allowed: desync_allowed
-        })
+        });
     });
 
-    socket.on("disconnect", ()=>{
-        console.log('socket disconnected')
+    socket.on("disconnect", () => {
+        console.log('socket disconnected');
+        //remove user from room.
+        remove_user_from_room(socket);
+
     });
 
     socket.on('addSong', (data) => {
