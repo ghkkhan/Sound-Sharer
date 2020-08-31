@@ -82,7 +82,7 @@ function add_user_to_room(user, room_name){
 remove_user_from_room = (socket) => {
     rooms.forEach((room) => {
         room._users.forEach(user => {
-            if(user.socket() === socket) { room.rem_user(user); return; };
+            if(user.socket === socket) { room.rem_user(user); return; };
         });
     });
 }
