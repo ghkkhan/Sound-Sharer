@@ -30,7 +30,7 @@ var User = require("./classes/User")
 
 // tell all rooms to update: timer
 // tell all users to update songqueue, user list, room name, song time, song index...
-function update_rooms(){
+function update_rooms() {
     console.log(rooms[0])
     rooms.forEach((room)=>{
         room.send_info() // send info to clients
@@ -77,7 +77,7 @@ function add_user_to_room(user, room_name){
             room.add_user(user);
             return true;
         }
-    })
+    });
 }
 remove_user_from_room = (socket) => {
     rooms.forEach((room) => {
