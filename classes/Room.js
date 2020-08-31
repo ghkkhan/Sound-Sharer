@@ -9,23 +9,41 @@ module.exports = class Room{
         this._song_time = 0; // in seconds
         this._play_song = false;
     }
-    get room_name(){ return this._room_name; }
+    get room_name() { return this._room_name; }
     get song_queue() { return this._song_queue; }
-    set play_song(b){ this._play_song = b; }
+    set play_song(b) { this._play_song = b; }
     add_user(User){
         this._users.push(User);
+        this.to_string();
+    }
+    rem_user(User) {
+        this._users = this._users.filter(e => e != User);
+        this.to_string();
     }
     add_song(Song){
         console.log(Song);
         this._song_queue.push(Song);
     }
-    notify_users(msg){
-        this._users.forEach((user)=>{
+    notify_users(msg) {
+        this._users.forEach((user) =>{
             let socket = user.socket;
             socket.emit('notify', {
                 msg: msg
             });
         });
+    }
+    to_string() {
+        console.log("\n Room in String");
+        console.log(`Roomname: ${this._room_name}`);
+        process.stdout.write("users: ");
+        this._users.forEach(user => {
+            process.stdout.write(user.name + ", ");
+        });
+        process.stdout.write("\nsongs: ");
+        this._song_queue.forEach(song => {
+            process.stdout.write(song.song_name);
+        });
+        console.log("\n");
     }
     send_info(){
         // send info about room to all users
