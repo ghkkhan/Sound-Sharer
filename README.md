@@ -4,18 +4,18 @@ feed audio files down a sink
 ## TODO
 
 ### Back-end
-- [ ] Room creation
-- [ ] Joining Room
-- [ ] receiving and saving songs on the server
+- [x] Room creation
+- [x] Joining Room
+- [x] receiving and saving songs on the server
 - [x] queueing songs
 - [x] keeping song and queue in sync for everyone, and newcomers
 - [ ] deleting songs from the queue
 
 ### Front-end
 - [x] Create/Join page
-- [ ] Room page creation.
+- [x] Room page creation.
 - [ ] Audio player and Queue handling
-- [ ] webpage variants for creator and joiner
+- [ ] webpage variants for creator and joiner [maybe not]
 - [ ] deleting songs from queue, updating the data
 
 ## Future Plans
