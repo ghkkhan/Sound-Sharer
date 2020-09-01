@@ -15,30 +15,13 @@
 <body>
 <h1 id="title">Shared Audio</h1>
 
-<!--Creating room part-->
-<script src="rcTest.js"></script>
-<div id="holder">
-    <button type="button" id="create_button" class="switch disabled" onclick="creating()">Create</button>
-    <button type="button" id="join_button" class="switch enabled" onclick="joining()">Join</button>
-</div>
-<br />
-<br />
-<div class="container">
-    <h2 id="mode">Create Room</h2>
 
-    <form>
-        <label class="main_form" for="room_name">Room Name</label>
-        <br />
-        <input class="main_form" type="text" id="rName" name="rName" placeholder="Room Name">
-        <br />
-        <label class="main_form" for="user_name">User ID</label>
-        <br />
-        <input class="main_form" type="text" id="uName" name="uName" placeholder="Smith">
-        <br />
-    </form>
-    <button id="enter_room" name="enter_room" onclick="enter()">Enter</button>
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+<!-- Load our React component. -->
+<div id="testID"></div>
 
-</div>
-<script src="./index.js"></script>
+<script src="index.js"></script>
+
 </body>
 </html>
