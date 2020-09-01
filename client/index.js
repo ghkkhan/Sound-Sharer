@@ -1,5 +1,3 @@
-'use strict';
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7,6 +5,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// import React from 'react';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+// 'use strict';
 
 var Main = function (_React$Component) {
   _inherits(Main, _React$Component);
@@ -55,59 +59,59 @@ var Main = function (_React$Component) {
 
 
   _createClass(Main, [{
-    key: "render",
+    key: 'render',
     value: function render() {
       return React.createElement(
-        "div",
+        'div',
         null,
         React.createElement(
-          "div",
-          { id: "holder" },
+          'div',
+          { id: 'holder' },
           React.createElement(
-            "button",
-            { type: "button", id: "create_button", className: ["switch", this.state.creating ? "disabled" : "enabled"].join(' '), onClick: this.creating },
-            "Create"
+            'button',
+            { type: 'button', id: 'create_button', className: ["switch", this.state.creating ? "disabled" : "enabled"].join(' '), onClick: this.creating },
+            'Create'
           ),
           React.createElement(
-            "button",
-            { type: "button", id: "join_button", className: ["switch", this.state.creating ? "enabled" : "disabled"].join(' '), onClick: this.joining },
-            "Join"
+            'button',
+            { type: 'button', id: 'join_button', className: ["switch", this.state.creating ? "enabled" : "disabled"].join(' '), onClick: this.joining },
+            'Join'
           )
         ),
-        React.createElement("br", null),
-        React.createElement("br", null),
+        React.createElement('br', null),
+        React.createElement('br', null),
         React.createElement(
-          "div",
-          { className: "container" },
+          'div',
+          { className: 'container' },
           React.createElement(
-            "h2",
-            { id: "mode" },
+            'h2',
+            { id: 'mode' },
             this.state.title
           ),
           React.createElement(
-            "form",
+            'form',
             null,
             React.createElement(
-              "label",
-              { className: "main_form" },
-              "Room Name"
+              'label',
+              { className: 'main_form' },
+              'Room Name'
             ),
-            React.createElement("br", null),
-            React.createElement("input", { className: "main_form", type: "text", id: "rName", name: "rName", placeholder: "Room Name" }),
-            React.createElement("br", null),
+            React.createElement('br', null),
+            React.createElement('input', { className: 'main_form', type: 'text', id: 'rName', name: 'rName', placeholder: 'Room Name' }),
+            React.createElement('br', null),
             React.createElement(
-              "label",
-              { className: "main_form" },
-              "User ID"
+              'label',
+              { className: 'main_form' },
+              'User ID'
             ),
-            React.createElement("br", null),
-            React.createElement("input", { className: "main_form", type: "text", id: "uName", name: "uName", placeholder: "Smith" }),
-            React.createElement("br", null)
+            React.createElement('br', null),
+            React.createElement('input', { className: 'main_form', type: 'text', id: 'uName', name: 'uName', placeholder: 'Smith' }),
+            React.createElement('br', null)
           ),
           React.createElement(
-            "button",
-            { id: "enter_room", name: "enter_room", onClick: this.enter },
-            "Enter"
+            'button',
+            { id: 'enter_room', name: 'enter_room', onClick: this.enter },
+            'Enter'
           )
         )
       );
@@ -118,7 +122,7 @@ var Main = function (_React$Component) {
 }(React.Component);
 
 var domContainer = document.querySelector('#testID');
-ReactDOM.render(React.createElement(Main), domContainer);
+ReactDOM.render(React.createElement(Main, null), domContainer);
 
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();

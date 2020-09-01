@@ -65,7 +65,7 @@ class Main extends React.Component {
 }
 
 const domContainer = document.querySelector('#testID');
-ReactDOM.render(React.createElement(Main), domContainer);
+ReactDOM.render(<Main />, domContainer);
 
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "feeds audio files down into a sink",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
