@@ -1,164 +1,222 @@
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// import React from 'react';
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-// 'use strict';
-
-var Main = function (_React$Component) {
-  _inherits(Main, _React$Component);
-
-  function Main(props) {
-    _classCallCheck(this, Main);
-
-    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
-
-    _this.creating = function () {
-      _this.setState({
-        creating: true,
-        title: "Create a Room!"
-      });
-    };
-
-    _this.joining = function () {
-      _this.setState({
-        creating: false,
-        title: "Join a Room!"
-      });
-    };
-
-    _this.enter = function () {
-      var room_name = document.getElementById("rName").value;
-      var user_name = document.getElementById("uName").value;
-
-      localStorage.room_name = room_name;
-      localStorage.user_name = user_name;
-      localStorage.joinBool = _this.state.creating;
-
-      if (_this.state.creating == true) create_room(room_name, user_name);else join_room(room_name, user_name);
-
-      // await a reply from the Server before moving on...
-      // window.location.replace("./room.html");
-    };
-
-    _this.state = {
-      creating: false,
-      title: "Join a Room!"
-    };
-    return _this;
-  }
-
-  //actually  /joining a game...
+// imports are not working ( ; _ ;) so all react components and all of the front end will be jam packed into this one file (lol).
+const cc = React.createElement;
 
 
-  _createClass(Main, [{
-    key: 'render',
-    value: function render() {
-      return React.createElement(
-        'div',
-        null,
-        React.createElement(
-          'div',
-          { id: 'holder' },
-          React.createElement(
-            'button',
-            { type: 'button', id: 'create_button', className: ["switch", this.state.creating ? "disabled" : "enabled"].join(' '), onClick: this.creating },
-            'Create'
-          ),
-          React.createElement(
-            'button',
-            { type: 'button', id: 'join_button', className: ["switch", this.state.creating ? "enabled" : "disabled"].join(' '), onClick: this.joining },
-            'Join'
-          )
-        ),
-        React.createElement('br', null),
-        React.createElement('br', null),
-        React.createElement(
-          'div',
-          { className: 'container' },
-          React.createElement(
-            'h2',
-            { id: 'mode' },
-            this.state.title
-          ),
-          React.createElement(
-            'form',
-            null,
-            React.createElement(
-              'label',
-              { className: 'main_form' },
-              'Room Name'
-            ),
-            React.createElement('br', null),
-            React.createElement('input', { className: 'main_form', type: 'text', id: 'rName', name: 'rName', placeholder: 'Room Name' }),
-            React.createElement('br', null),
-            React.createElement(
-              'label',
-              { className: 'main_form' },
-              'User ID'
-            ),
-            React.createElement('br', null),
-            React.createElement('input', { className: 'main_form', type: 'text', id: 'uName', name: 'uName', placeholder: 'Smith' }),
-            React.createElement('br', null)
-          ),
-          React.createElement(
-            'button',
-            { id: 'enter_room', name: 'enter_room', onClick: this.enter },
-            'Enter'
-          )
-        )
-      );
+/********  FIRST UP ARE ALL THE COMPONENTS ********/
+/*
+ * First up is the Header. The banner on all pages... so to speak...
+ */
+ class HeadBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            switchBar: props.mid
+        };
     }
-  }]);
+    render() {
+        return (
+            cc('div', null,
+                cc('h1', {id:"title"}, "Shared Audio"),
+                this.state.switchBar,
+                // cc('div', {id:"holder"}, this.state.switchBar)
+            )
+        );
+    }
+}
 
-  return Main;
-}(React.Component);
+/* 
+ * The Switch component is the twin set of buttons. 
+ * Only one of them is enabled at any given time. 
+ * therefore it's name, the Switch.
+ */
+class Switch extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            creatin:this.props.creatin,
+        }
+        localStorage.joinBool =  this.props.creatin;
+    }
+    create = () => {
+        this.setState({
+            creatin:true,
+        });
+        localStorage.joinBool = false;
+        this.props.creat();
+    }
+    join = () => {
+        this.setState({
+            creatin: false,
+        });
+        localStorage.joinBool =  true;
+        this.props.jon();
+    }
+    render() {
+        return(
+            cc("div", {id:"holder"}, 
+            cc("button", {id:"create_button", className:["switch",this.state.creatin? "enabled" : "disabled"].join(' '), onClick:this.create}, "Create"),
+            cc("button", {type:"button", id:"join_button", className:["switch",this.state.creatin? "disabled" : "enabled"].join(' '), onClick:this.join}, "Join"),
+            )
+        );
+    }
+}
 
-var domContainer = document.querySelector('#testID');
-ReactDOM.render(React.createElement(Main, null), domContainer);
+/**
+ * The ActionScene... where the main bit of the entire web-app will be displayed...
+ * from the join/create content to the song uploaders and the music palyer...
+ */
+class ActionScene extends React.Component {
+    constructor(props) {
+        //not much here for now because this is just an empty holder...
+        super(props);
+        this.state = {}
+    }
+    render() {
+        return(
+            //only has one thing of any significance... which is the 'encase' variable... for now
+            cc("div", {className:'container'}, 
+                cc("h2", {id:'mode'}, this.props.title),
+                this.props.encase
+            )
+        )
+    }
+}
+
+// The Login Component just allows the user to create a room or join an existing room...
+class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+
+    //actually  /joining a game...
+    enter = () => {
+        var room_name = document.getElementById("rName").value;
+        var user_name = document.getElementById("uName").value;
+
+        localStorage.room_name = room_name;
+        localStorage.user_name = user_name;
+        // console.log(localStorage.joinBool); LocalStorage FTW!
+
+        if(localStorage.joinBool === "true") { // apparently localstorage stores data as strings...
+            join_room(room_name, user_name);
+        }
+        else {
+            create_room(room_name, user_name);
+        }
+
+        // await a reply from the Server before moving on...
+        // window.location.replace("./room.html");
+    }
+    render() {
+        return(
+            cc("div", null,
+                cc("form", null,
+                    cc("label",{className:"main_form"}, "Room Name"),cc("br", null),
+                    cc("input", {className:"main_form", type:"text", id:"rName", placeholder:"Dungeon"}),cc("br", null),
+                    cc("label", {className:"main_form"}, "User ID"),cc("br", null),
+                    cc("input", {className:"main_form", type:"text", id:"uName", placeholder:"Smith"}),cc("br", null),
+                ),
+                cc("button", {id:"enter_room", name:"enter_room", onClick:this.enter}, "Enter")
+            )
+        )
+    }
+}
+
+// TODO: MusicScene
+// TODO: SlideLeft
+// TODO: SlideRight
+
+
+// the credits component just puts our name on display near the bottom of the page...
+class Credits extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+    render() {
+        return(
+            cc("div",null, null)
+        )
+    }
+}
+
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            lgnPage:true,
+            creating: false, 
+            joinTitle:"Join a Room!",
+            createTitle: "Create a Room!",
+        };
+    }
+
+    creat = () => {
+        this.setState({
+            creating:true,
+        });
+    }
+    jon = () => {
+        this.setState({
+            creating:false,
+        });
+    }
+    render() {
+        return(
+            // <div>
+            //     {/* <HeadBar mid={<Switch />} /> */}
+            //     {/* <ActionScene encase={<Login />} />
+            //     <Credits /> */}
+            // </div>
+            
+            cc("div", null, 
+                cc(HeadBar, { mid:cc(Switch, {creatin:this.state.creating, creat:this.creat, jon:this.jon})} ),
+                cc(ActionScene, { title: this.state.creating ? (this.state.createTitle) : (this.state.joinTitle), encase:cc(Login,null ), creating:this.state.creating}),
+                cc(Credits, null)
+            )
+        );
+    };
+}
+const domContainer = document.querySelector('#root');
+ReactDOM.render(cc(App), domContainer);
 
 ///////////////////////////////////////// SOCKET STUFF
 var socket = io.connect();
 
 // create room handler
-function create_room(room_name, user_name) {
-  var data = {
-    rName: room_name,
-    uName: user_name
-  };
-  socket.emit('create_room', data);
+function create_room (room_name, user_name){
+    let data = {
+        rName: room_name,
+        uName: user_name
+    }
+    socket.emit('create_room', data);
 };
 
 // join room handler
-function join_room(room_name, user_name) {
-  var data = {
-    rName: room_name,
-    uName: user_name
-  };
-  socket.emit('join_room', data);
+function join_room (room_name, user_name) {
+    let data = {
+        rName: room_name,
+        uName: user_name
+    }
+    socket.emit('join_room', data);
 };
 
 //error checking steps...
-socket.on("room-success", function (data) {
-  console.log("Connection to room secured. Moving on to room-page.");
-  window.location.replace("./room.html");
+socket.on("room-success", data => {
+    console.log("Connection to room secured. Moving on to room-page.");
+    window.location.replace("./room.html");
 });
 
-socket.on("room-error", function (data) {
-  console.log("eror occured. Please try again");
-  if (data.status == "RAE") {
-    console.log("Room Already Exists. pick another room");
-    alert("There is already a room with the same name that you've picked... Please pick another name.");
-  } else if (data.status == "ROOM-DNE") {
-    console.log("Room name doesn't exist.");
-    alert("The room you are trying to join does not exist. Please check the entry and try again.");
-  }
-  document.getElementById("rName").value = "";
+socket.on("room-error", data => {
+    console.log("eror occured. Please try again");
+    if(data.status == "RAE"){
+        console.log("Room Already Exists. pick another room");
+        alert("There is already a room with the same name that you've picked... Please pick another name.");
+    }
+    else if(data.status == "ROOM-DNE") {
+        console.log("Room name doesn't exist.");
+        alert("The room you are trying to join does not exist. Please check the entry and try again.");
+    }
+    document.getElementById("rName").value = "";
 });
