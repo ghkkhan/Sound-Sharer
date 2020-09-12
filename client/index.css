@@ -20,6 +20,7 @@ body {
     padding: 10px 24px; /* Some padding */
     cursor: pointer; /* Pointer/hand icon */
 }
+
 .disabled{
     background-color: white;
     cursor: initial;
@@ -39,10 +40,12 @@ body {
     background-color: #298640;  
 }
 .container {
-    margin: auto;
-    margin-top:1%;
+    /* margin:auto; */
+    margin:0.5%;
+    margin-left: auto;
+    margin-right: auto;
     height:500px;
-    width:67%;
+    width:50%;
     border: 4px solid black;
     background-color: #f4f6ff;
     padding-bottom: 100px;
@@ -50,10 +53,39 @@ body {
     -webkit-transition:height 1.5s;
     -o-transition: height 1.5s;
     transition: height 1.5s;
+    float:left;
 }
+.containerSide {
+    margin:0.5%;
+    /* visibility: hidden; */
+    height: 100px;
+    width:23%;
+    -moz-transition: height 1.5s;
+    -webkit-transition:height 1.5s;
+    -o-transition: height 1.5s;
+    transition: height 1.5s;
+}
+/* .scene {
+    height: auto;
+    width: auto;
+} */
+/*
+.containerSide {
+    height: 750px;
+    width: 250px;
+} */
+body.magic #holder{
 
+    visibility: hidden;
+}
 body.magic .container {
     height:750px;
+    visibility: visible;
+}
+body.magic .containerSide {
+    height: 720px;
+    margin-top: 1%;
+    /* visibility: visible; */
 }
 .main_form {
     margin: 32px;
